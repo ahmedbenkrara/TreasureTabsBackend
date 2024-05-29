@@ -72,7 +72,7 @@ exports.login = async (req, res) => {
             return messageHandler.error('You have provided a wrong password !', 401)
 
         //now auth is done successfully and need to create the tokens
-        const TOKEN_PAYLOAD = { userEmail: email, role: checkIfUserExists.role }
+        const TOKEN_PAYLOAD = { userId: checkIfUserExists._id, role: checkIfUserExists.role }
         const accessToken = jwt.sign(TOKEN_PAYLOAD, process.env.ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_LIFE_TIME })
         const refreshToken = jwt.sign(TOKEN_PAYLOAD, process.env.REFRESH_TOKEN_SECRET, { expiresIn: REFRESH_TOKEN_LIFE_TIME })
         
@@ -119,7 +119,7 @@ exports.refresh = async (req, res) => {
                 return messageHandler.error('RefreshToken isn\'t valid !', 403)
             
             const accessToken = jwt.sign(
-                { userEmail: findUser.email, role: findUser.role },
+                { userId: findUser._id, role: findUser.role },
                 process.env.ACCESS_TOKEN_SECRET,
                 { expiresIn: ACCESS_TOKEN_LIFE_TIME }
             )
@@ -140,8 +140,8 @@ exports.refresh = async (req, res) => {
 exports.logout = async (req, res) => {
     const messageHandler = new MessageHandler(res)
     try{
-        const email = req.userEmail //it comes from middleware
-        const user = await User.findByEmail(email)
+        const id = req.userId //it comes from middleware
+        const user = await User.findById(id)
 
         user.refreshToken = null
         await user.save()
@@ -158,8 +158,8 @@ exports.logout = async (req, res) => {
 exports.getUser = async (req, res) => {
     const messageHandler = new MessageHandler(res)
     try{
-        const email = req.userEmail //it comes from middleware
-        const user = await User.findByEmail(email).select('-password')
+        const id = req.userId //it comes from middleware
+        const user = await User.findById(id).select('-password')
 
         messageHandler.success(null, 200, user)
     }catch(error){

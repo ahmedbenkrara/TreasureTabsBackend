@@ -14,7 +14,7 @@ const verifyAuth = (roles = []) => async (req, res, next) => {
         if(!roles.includes(decode.role))
             return messageHandler.error('Forbidden: You do not have permission to access this resource', 403)
 
-        req.userEmail = decode.userEmail
+        req.userId = decode.userId
         req.role = decode.role
         
         next()
