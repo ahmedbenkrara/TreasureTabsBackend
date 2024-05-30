@@ -5,12 +5,6 @@ const bookmarkSchema = new mongoose.Schema({
         type: String, 
         required: true, 
         lowercase: true,
-        trim: true
-    },
-    title: {
-        type: String, 
-        required: true, 
-        lowercase: true,
         minlength: 3,
         trim: true
     },

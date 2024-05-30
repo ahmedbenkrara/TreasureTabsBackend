@@ -50,6 +50,12 @@ const userSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Category'
         }
+    ],
+    socialmedias: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'SocialMedia'
+        }
     ]
 })
 

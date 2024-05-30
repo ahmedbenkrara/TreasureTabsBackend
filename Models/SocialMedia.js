@@ -9,7 +9,8 @@ const SocialMediaSchema = new mongoose.Schema({
         type: String, 
         required: true, 
         lowercase: true,
-        trim: true
+        trim: true,
+        minlength: 2
     },
     createdAt: {
         type: Date,
