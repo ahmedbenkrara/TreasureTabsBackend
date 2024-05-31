@@ -43,7 +43,7 @@ exports.update = async (req, res) => {
     const messageHandler = new MessageHandler(res)
 
     try{
-        const { id } = req.params.id
+        const { id } = req.params
         const { name } = req.body
         
         if(!name)
