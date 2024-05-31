@@ -45,15 +45,20 @@ exports.update = async (req, res) => {
     const messageHandler = new MessageHandler(res)
 
     try{
-        const { id } = req.params.id
+        const { id } = req.params
+        const icon = req.file
         const { name } = req.body
         
         if(!name)
             return messageHandler.error('Social Media name is required !', 400)
 
+        
         const socialMedia = await SocialMedia.findById(id)
         if(!socialMedia)
             return messageHandler.error('Social Media not found', 404)
+        
+        if(!icon)
+            socialMedia.icon = icon.filename
 
         socialMedia.name = name
         await socialMedia.save()
