@@ -120,6 +120,7 @@ exports.update = async (req, res) => {
             return messageHandler.error('The Social media selected isn\'t owned by the current user !', 400)
 
         found.title = title
+        found.description = description
         found.tags = tags
         found.category = category
         found.socialmedia = socialmedia

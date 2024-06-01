@@ -1,9 +1,10 @@
+const path = require('path')
 const jwt = require('jsonwebtoken')
 
 const MessageHandler = require(path.join(__dirname, '..', 'utils', 'responses', 'MessageHandler'))
 
 const verifyAuth = (roles = []) => async (req, res, next) => {
-    const token = req.cookie.jwt
+    const token = req.cookies.jwt
     const messageHandler = new MessageHandler(res)
 
     if(!token) return messageHandler.error('Unauthorized : Access token not found !', 401)

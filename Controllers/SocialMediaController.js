@@ -2,6 +2,8 @@ const path = require('path')
 const SocialMedia = require(path.join(__dirname, '..', 'Models', 'SocialMedia'))
 const MessageHandler = require(path.join(__dirname, '..', 'utils', 'responses', 'MessageHandler'))
 
+const FILES_LINK_PREFIX = "uploads/"
+
 exports.getAll = async (req, res) => {
     const messageHandler = new MessageHandler(res)
 
@@ -16,7 +18,7 @@ exports.getAll = async (req, res) => {
 
 exports.create = async (req, res) => {
     const messageHandler = new MessageHandler(res)
-
+    
     try{
         const icon = req.file
         const name  = req.body.name
@@ -29,7 +31,7 @@ exports.create = async (req, res) => {
             return messageHandler.error('Social Media name is required !', 400)
 
         const socialMedia = await SocialMedia.create({
-            icon: icon.filename,
+            icon: FILES_LINK_PREFIX + icon.filename,
             name: name,
             user: userId
         })
@@ -51,14 +53,14 @@ exports.update = async (req, res) => {
         
         if(!name)
             return messageHandler.error('Social Media name is required !', 400)
-
+        
         
         const socialMedia = await SocialMedia.findById(id)
         if(!socialMedia)
             return messageHandler.error('Social Media not found', 404)
         
-        if(!icon)
-            socialMedia.icon = icon.filename
+        if(icon)
+            socialMedia.icon = FILES_LINK_PREFIX + icon.filename
 
         socialMedia.name = name
         await socialMedia.save()

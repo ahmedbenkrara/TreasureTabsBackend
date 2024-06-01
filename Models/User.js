@@ -26,7 +26,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        lowercase: true,
         minlength: 3
     },
     refreshToken: String, 
@@ -60,7 +59,7 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.statics.findByEmail = function(email){
-    return this.findOne({ email: {$eq: new RegExp(email, 'i')} })
+    return this.findOne({ email: {$eq: email.toLowerCase()} })
 }
 
 userSchema.statics.findByRefreshToken = function(token){

@@ -8,10 +8,13 @@ const MessageHandler = require(path.join(__dirname, '..', 'utils', 'responses', 
 const ACCESS_TOKEN_LIFE_TIME = '30m'
 const REFRESH_TOKEN_LIFE_TIME = '7d'
 
+// const ACCESS_TOKEN_LIFE_TIME = '1m'
+// const REFRESH_TOKEN_LIFE_TIME = '7d'
+
 exports.register = async (req, res) => {
     const messageHandler = new MessageHandler(res)
     try{
-        const { firstName, lastName, email, password, role  } = req.body
+        let { firstName, lastName, email, password, role  } = req.body
         
         if(!firstName)
             return messageHandler.error('First name is required !', 400)
@@ -21,11 +24,11 @@ exports.register = async (req, res) => {
 
         if(!email){
             return messageHandler.error('Email is required !', 400)
-        }else{
-            const user = await User.findByEmail(email)
-            if(user)
-                return messageHandler.error('There is already account with this email !', 409)//conflict
         }
+        const exists = await User.findByEmail(email)
+        if(exists)
+            return messageHandler.error('There is already an account with this email !', 409)//conflict
+        
 
         if(!password)
             return messageHandler.error('Password is required !', 400)
@@ -33,7 +36,7 @@ exports.register = async (req, res) => {
         if(!role)
             role = 'user'
 
-        const hashedPassword = bcrypt.hash(password, 10)
+        const hashedPassword = await bcrypt.hash(password, 10)
         const user = await User.create({
             firstName,
             lastName, 
@@ -41,10 +44,10 @@ exports.register = async (req, res) => {
             password : hashedPassword, 
             role
         })
-
+        
         if(user)
             return messageHandler.success('Account created successfully !', 201)
-
+        
         messageHandler.error('Something went wrong please try again later !')
     }catch(error){
         messageHandler.error(error.message)
@@ -66,7 +69,7 @@ exports.login = async (req, res) => {
         
         if(!checkIfUserExists)
             return messageHandler.error('There is no account with this email !', 404)
-
+        
         const passwordsMatch = await bcrypt.compare(password, checkIfUserExists.password)
         if(!passwordsMatch)
             return messageHandler.error('You have provided a wrong password !', 401)
@@ -86,13 +89,13 @@ exports.login = async (req, res) => {
         res.cookie('jwt', accessToken, {
             httpOnly: true, 
             sameSite: 'None',
-            secure: true
+            secure: false//it should be true in https
         })
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true, 
             sameSite: 'None',
-            secure: true
+            secure: false//it should be true in https
         })
 
         messageHandler.success('Login successful !')
@@ -104,6 +107,7 @@ exports.login = async (req, res) => {
 exports.refresh = async (req, res) => {
     const messageHandler = new MessageHandler(res)
     try{
+        // return messageHandler.success('here')
         const refreshToken = req.cookies.refreshToken
 
         if(!refreshToken)
@@ -125,9 +129,9 @@ exports.refresh = async (req, res) => {
             )
 
             res.cookie('jwt', accessToken, {
-                httpOnly: true,
+                httpOnly: true, 
                 sameSite: 'None',
-                secure: true
+                secure: false//it should be true in https
             })
 
             messageHandler.success('Token is refreshed successfully !')
