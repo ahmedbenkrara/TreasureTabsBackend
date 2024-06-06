@@ -89,13 +89,13 @@ exports.login = async (req, res) => {
         res.cookie('jwt', accessToken, {
             httpOnly: true, 
             sameSite: 'None',
-            secure: false//it should be true in https
+            secure: true
         })
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true, 
             sameSite: 'None',
-            secure: false//it should be true in https
+            secure: true
         })
 
         messageHandler.success('Login successful !')
@@ -131,7 +131,7 @@ exports.refresh = async (req, res) => {
             res.cookie('jwt', accessToken, {
                 httpOnly: true, 
                 sameSite: 'None',
-                secure: false//it should be true in https
+                secure: true//it should be true in https
             })
 
             messageHandler.success('Token is refreshed successfully !')

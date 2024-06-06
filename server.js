@@ -36,7 +36,7 @@ app.use(cookieParser())
 app.use(helmet())
 app.use(xss())
 app.use(mongoSanitize())
-
+console.log(process.env.COR_ORIGINS.split(','))
 app.use(cors({
     origin: process.env.COR_ORIGINS.split(','),
     credentials: true,
